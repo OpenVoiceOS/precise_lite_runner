@@ -91,8 +91,3 @@ def inject_params(model_name: str) -> ListenerParams:
             print('Warning: Failed to load parameters from ' + params_file)
     return pr
 
-
-def save_params(model_name: str):
-    """Save current global listener params to a file"""
-    with open(model_name + '.params', 'w') as f:
-        json.dump(pr.__dict__, f)

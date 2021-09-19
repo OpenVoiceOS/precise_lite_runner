@@ -1,6 +1,5 @@
 import atexit
 import time
-from subprocess import PIPE, Popen
 from threading import Thread, Event
 
 import numpy as np
@@ -100,58 +99,19 @@ class Listener:
         return self.threshold_decoder.decode(raw_output)
 
 
-class Engine:
-    def __init__(self, chunk_size=2048):
+class ListenerEngine:
+    def __init__(self, listener, chunk_size=2048):
+        self.listener = listener
         self.chunk_size = chunk_size
 
     def start(self):
         pass
 
+    def get_prediction(self, chunk):
+        return self.listener.update(chunk)
+
     def stop(self):
         pass
-
-    def get_prediction(self, chunk):
-        raise NotImplementedError
-
-
-class PreciseEngine(Engine):
-    """
-    Wraps a binary precise executable
-
-    Args:
-        exe_file (Union[str, list]): Either filename or list of arguments
-                                     (ie. ['python', 'precise/scripts/engine.py'])
-        model_file (str): Location to .pb model file to use (with .pb.params)
-        chunk_size (int): Number of *bytes* per prediction. Higher numbers
-                          decrease CPU usage but increase latency
-    """
-
-    def __init__(self, exe_file, model_file, chunk_size=2048):
-        Engine.__init__(self, chunk_size)
-        self.exe_args = exe_file if isinstance(exe_file, list) else [exe_file]
-        self.exe_args += [model_file, str(self.chunk_size)]
-        self.proc = None
-
-    def start(self):
-        self.proc = Popen(self.exe_args, stdin=PIPE, stdout=PIPE)
-
-    def stop(self):
-        if self.proc:
-            self.proc.kill()
-            self.proc = None
-
-    def get_prediction(self, chunk):
-        if len(chunk) != self.chunk_size:
-            raise ValueError('Invalid chunk size: ' + str(len(chunk)))
-        self.proc.stdin.write(chunk)
-        self.proc.stdin.flush()
-        return float(self.proc.stdout.readline())
-
-
-class ListenerEngine(Engine):
-    def __init__(self, listener, chunk_size=2048):
-        Engine.__init__(self, chunk_size)
-        self.get_prediction = listener.update
 
 
 class ReadWriteStream:
@@ -227,17 +187,8 @@ class TriggerDetector:
 
 class PreciseRunner:
     """
-    Wrapper to use Precise. Example:
-    >>> def on_act():
-    ...     print('Activation!')
-    ...
-    >>> p = PreciseRunner(PreciseEngine('./precise-engine'), on_activation=on_act)
-    >>> p.start()
-    >>> from time import sleep; sleep(10)
-    >>> p.stop()
-
     Args:
-        engine (Engine): Object containing info on the binary engine
+        engine (ListenerEngine):
         trigger_level (int): Number of chunk activations needed to trigger on_activation
                        Higher values add latency but reduce false positives
         sensitivity (float): From 0.0 to 1.0, how sensitive the network should be
