@@ -97,20 +97,8 @@ class Listener:
         raw_output = self.runner.run(mfccs)
         return self.threshold_decoder.decode(raw_output)
 
-
-class ListenerEngine:
-    def __init__(self, listener, chunk_size=2048):
-        self.listener = listener
-        self.chunk_size = chunk_size
-
-    def start(self):
-        pass
-
     def get_prediction(self, chunk):
-        return self.listener.update(chunk)
-
-    def stop(self):
-        pass
+        return self.update(chunk)
 
 
 class ReadWriteStream:
@@ -187,7 +175,7 @@ class TriggerDetector:
 class PreciseRunner:
     """
     Args:
-        engine (ListenerEngine):
+        listener (Listener):
         trigger_level (int): Number of chunk activations needed to trigger on_activation
                        Higher values add latency but reduce false positives
         sensitivity (float): From 0.0 to 1.0, how sensitive the network should be
@@ -197,19 +185,18 @@ class PreciseRunner:
         on_activation (Callable): callback for when the wake word is heard
     """
 
-    def __init__(self, engine, trigger_level=3, sensitivity=0.5, stream=None,
+    def __init__(self, listener, trigger_level=3, sensitivity=0.5, stream=None,
                  on_prediction=lambda x: None, on_activation=lambda: None):
-        self.engine = engine
+        self.listener = listener
         self.trigger_level = trigger_level
         self.stream = stream
         self.on_prediction = on_prediction
         self.on_activation = on_activation
-        self.chunk_size = engine.chunk_size
+        self.chunk_size = self.listener.chunk_size
 
         self.pa = None
         self.thread = None
         self.running = False
-        self.is_paused = False
         self.detector = TriggerDetector(self.chunk_size, sensitivity,
                                         trigger_level)
         atexit.register(self.stop)
@@ -233,9 +220,7 @@ class PreciseRunner:
 
         self._wrap_stream_read(self.stream)
 
-        self.engine.start()
         self.running = True
-        self.is_paused = False
         self.thread = Thread(target=self._handle_predictions, daemon=True)
         self.thread.daemon = True
         self.thread.start()
@@ -249,18 +234,10 @@ class PreciseRunner:
             self.thread.join()
             self.thread = None
 
-        self.engine.stop()
-
         if self.pa:
             self.pa.terminate()
             self.stream.stop_stream()
             self.stream = self.pa = None
-
-    def pause(self):
-        self.is_paused = True
-
-    def play(self):
-        self.is_paused = False
 
     def _handle_predictions(self):
         """Continuously check Precise process output"""
@@ -268,10 +245,7 @@ class PreciseRunner:
             # t0 = time.time()
             chunk = self.stream.read(self.chunk_size)
 
-            if self.is_paused:
-                continue
-
-            prob = self.engine.get_prediction(chunk)
+            prob = self.listener.get_prediction(chunk)
             self.on_prediction(prob)
             if self.detector.update(prob):
                 self.on_activation()
