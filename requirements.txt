@@ -1,0 +1,4 @@
+tflit
+sonopy==0.1.2
+wavio==0.0.4
+pyaudio
