@@ -1,10 +1,10 @@
 import numpy as np
 
-from precise_lite_runner.params import inject_params, pr
 from precise_lite_runner.runner import ListenerEngine, ReadWriteStream, \
     PreciseRunner, TFLiteRunner, Listener
 from precise_lite_runner.util import buffer_to_audio, ThresholdDecoder
 from precise_lite_runner.vectorization import vectorize_raw, add_deltas
+from precise_lite_runner.params import params
 
 
 class PreciseLiteListener:
@@ -13,7 +13,7 @@ class PreciseLiteListener:
         on_activation = on_activation or self.on_activation
         on_prediction = on_prediction or self.on_prediction
         self.listener = Listener(model, chunk_size)
-        self.audio_buffer = np.zeros(self.listener.pr.buffer_samples,
+        self.audio_buffer = np.zeros(params.buffer_samples,
                                      dtype=float)
         self.engine = ListenerEngine(self.listener, chunk_size)
         self.engine.get_prediction = self.get_prediction

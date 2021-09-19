@@ -1,25 +1,25 @@
 from math import floor
 
-import attr
-import json
-import hashlib
-from os.path import isfile
+
+class Vectorizer:
+    mels = 1
+    mfccs = 2
+    speechpy_mfccs = 3
 
 
-@attr.s(frozen=True)
 class ListenerParams:
-    window_t = attr.ib()  # type: float
-    hop_t = attr.ib()  # type: float
-    buffer_t = attr.ib()  # type: float
-    sample_rate = attr.ib()  # type: int
-    sample_depth = attr.ib()  # type: int
-    n_mfcc = attr.ib()  # type: int
-    n_filt = attr.ib()  # type: int
-    n_fft = attr.ib()  # type: int
-    use_delta = attr.ib()  # type: bool
-    vectorizer = attr.ib()  # type: int
-    threshold_config = attr.ib()  # type: tuple
-    threshold_center = attr.ib()  # type: float
+    window_t = 0.1
+    hop_t = 0.05
+    buffer_t = 1.5
+    sample_rate = 16000
+    sample_depth = 2
+    n_mfcc = 13
+    n_filt = 20
+    n_fft = 512
+    use_delta = False
+    vectorizer = Vectorizer.mfccs
+    threshold_config = ((6, 4),)
+    threshold_center = 0.2
 
     @property
     def buffer_samples(self):
@@ -53,41 +53,7 @@ class ListenerParams:
             num_features *= 2
         return num_features
 
-    def vectorization_md5_hash(self):
-        """Hash all the fields related to audio vectorization"""
-        keys = sorted(pr.__dict__)
-        keys.remove('threshold_config')
-        keys.remove('threshold_center')
-        return hashlib.md5(
-            str([pr.__dict__[i] for i in keys]).encode()
-        ).hexdigest()
-
-
-class Vectorizer:
-    mels = 1
-    mfccs = 2
-    speechpy_mfccs = 3
-
 
 # Global listener parameters
-pr = ListenerParams(
-    window_t=0.1, hop_t=0.05, buffer_t=1.5, sample_rate=16000,
-    sample_depth=2, n_mfcc=13, n_filt=20, n_fft=512, use_delta=False,
-    threshold_config=((6, 4),), threshold_center=0.2, vectorizer=Vectorizer.mfccs
-)
-
-# Used to fill in old param files without new attributes
-compatibility_params = dict(vectorizer=Vectorizer.speechpy_mfccs)
-
-
-def inject_params(model_name: str) -> ListenerParams:
-    """Set the global listener params to a saved model"""
-    params_file = model_name + '.params'
-    try:
-        with open(params_file) as f:
-            pr.__dict__.update(compatibility_params, **json.load(f))
-    except (OSError, ValueError, TypeError):
-        if isfile(model_name):
-            print('Warning: Failed to load parameters from ' + params_file)
-    return pr
+params = ListenerParams()
 

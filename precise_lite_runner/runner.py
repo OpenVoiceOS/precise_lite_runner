@@ -7,7 +7,7 @@ import pyaudio
 import tflit
 from pyaudio import PyAudio, paInt16
 
-from precise_lite_runner.params import inject_params, pr
+from precise_lite_runner.params import params
 from precise_lite_runner.util import buffer_to_audio, ThresholdDecoder
 from precise_lite_runner.vectorization import vectorize_raw, add_deltas
 
@@ -55,16 +55,15 @@ class Listener:
 
     def __init__(self, model_name: str, chunk_size: int = -1):
         self.window_audio = np.array([])
-        self.pr = inject_params(model_name)
-        self.mfccs = np.zeros((self.pr.n_features, self.pr.n_mfcc))
+        self.mfccs = np.zeros((params.n_features, params.n_mfcc))
         self.chunk_size = chunk_size
         self.runner = TFLiteRunner(model_name)
-        self.threshold_decoder = ThresholdDecoder(self.pr.threshold_config,
-                                                  pr.threshold_center)
+        self.threshold_decoder = ThresholdDecoder(params.threshold_config,
+                                                  params.threshold_center)
 
     def clear(self):
         self.window_audio = np.array([])
-        self.mfccs = np.zeros((self.pr.n_features, self.pr.n_mfcc))
+        self.mfccs = np.zeros((params.n_features, params.n_mfcc))
 
     def update_vectors(self, stream):
         if isinstance(stream, np.ndarray):
@@ -80,10 +79,10 @@ class Listener:
 
         self.window_audio = np.concatenate((self.window_audio, buffer_audio))
 
-        if len(self.window_audio) >= self.pr.window_samples:
+        if len(self.window_audio) >= params.window_samples:
             new_features = vectorize_raw(self.window_audio)
             self.window_audio = self.window_audio[
-                                len(new_features) * self.pr.hop_samples:]
+                                len(new_features) * params.hop_samples:]
             if len(new_features) > len(self.mfccs):
                 new_features = new_features[-len(self.mfccs):]
             self.mfccs = np.concatenate(
@@ -93,7 +92,7 @@ class Listener:
 
     def update(self, stream):
         mfccs = self.update_vectors(stream)
-        if self.pr.use_delta:
+        if params.use_delta:
             mfccs = add_deltas(mfccs)
         raw_output = self.runner.run(mfccs)
         return self.threshold_decoder.decode(raw_output)
