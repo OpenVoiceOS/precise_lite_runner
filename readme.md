@@ -11,7 +11,7 @@ stream = None # if stream is None it will open a pyaudio stream automatically
 chunk_size = 2048
 precise_model = "/path/here.tflite"
 
-def on_activation(self):
+def on_activation():
     has_found = True # do something
 
 runner = PreciseLiteListener(model=precise_model, stream=stream, chunk_size=chunk_size,

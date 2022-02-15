@@ -4,8 +4,8 @@ from threading import Thread, Event
 
 import numpy as np
 import pyaudio
-import tflit
 from pyaudio import PyAudio, paInt16
+import tflite_runtime.interpreter as tflite
 
 from precise_lite_runner.params import params
 from precise_lite_runner.util import buffer_to_audio, ThresholdDecoder
@@ -15,15 +15,11 @@ from precise_lite_runner.vectorization import vectorize_raw, add_deltas
 class TFLiteRunner:
     def __init__(self, model_name: str):
         #  Setup tflite environment
-        self.model = tflit.Model(model_name)
-        self.interpreter = self.model.interpreter
+        self.interpreter = tflite.Interpreter(model_path=model_name)
         self.interpreter.allocate_tensors()
 
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
-
-    def summary(self):
-        self.model.summary()
 
     def predict(self, inputs: np.ndarray):
         # Format output to match Keras's model.predict output

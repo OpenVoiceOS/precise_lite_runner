@@ -6,11 +6,8 @@ from lichecker import LicenseChecker
 # these packages dont define license in setup.py
 # manually verified and injected
 license_overrides = {
-    "kthread": "MIT",
-    'yt-dlp': "Unlicense",
-    'pyxdg': 'GPL-2.0',
-    'ptyprocess': 'ISC license',
-    'psutil': 'BSD3'
+    "sonopy": "Apache-2.0",
+    "pyaudio": "MIT"
 }
 # explicitly allow these packages that would fail otherwise
 whitelist = []
