@@ -5,7 +5,11 @@ from threading import Thread, Event
 import numpy as np
 import pyaudio
 from pyaudio import PyAudio, paInt16
-import tflite_runtime.interpreter as tflite
+
+try:
+    import tflite_runtime.interpreter as tflite
+except:
+    import tensorflow.lite as tflite
 
 from precise_lite_runner.params import params
 from precise_lite_runner.util import buffer_to_audio, ThresholdDecoder
