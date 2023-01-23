@@ -7,9 +7,9 @@ import pyaudio
 from pyaudio import PyAudio, paInt16
 
 try:
-    import tflite_runtime.interpreter as tflite
-except:
     import tensorflow.lite as tflite
+except:
+    import tflite_runtime.interpreter as tflite
 
 from precise_lite_runner.params import params
 from precise_lite_runner.util import buffer_to_audio, ThresholdDecoder
