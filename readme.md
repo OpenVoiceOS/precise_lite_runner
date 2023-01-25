@@ -2,6 +2,10 @@
 
 use precise-lite models in your projects
 
+This package supports both tflite-runner and the full tensorflow.
+To install with tflite, use `pip install precise_lite_runner[tflite]`.
+For the full tensorflow use `pip install precise_lite_runner[full]`.
+
 ```python
 from precise_lite_runner import PreciseLiteListener, ReadWriteStream
 
