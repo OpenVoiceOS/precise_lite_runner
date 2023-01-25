@@ -8,6 +8,10 @@ setup(
     license='Apache-2.0',
     install_requires=["sonopy==0.1.2",
                       "pyaudio"],
+    extras_require={
+        'tflite': [ "tflite-runtime" ],
+        'full': [ "tensorflow" ]
+    },
     author='jarbas',
     author_email='jarbasai@mailfence.com',
     description=''
