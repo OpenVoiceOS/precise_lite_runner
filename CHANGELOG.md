@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/OpenVoiceOS/precise_lite_runner/tree/HEAD)
+## [V0.4.1a2](https://github.com/OpenVoiceOS/precise_lite_runner/tree/V0.4.1a2) (2023-04-06)
 
-[Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/0.4.0...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/0.4.0...V0.4.1a2)
 
 **Implemented enhancements:**
 
