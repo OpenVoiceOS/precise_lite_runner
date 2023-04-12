@@ -1,4 +1,5 @@
 import os
+
 from setuptools import setup
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -36,11 +37,10 @@ setup(
     url='https://github.com/OpenVoiceOS/precise_lite_runner',
     license='Apache-2.0',
     include_package_data=True,
-    install_requires=["sonopy==0.1.2",
-                      "pyaudio"],
+    install_requires=["sonopy==0.1.2"],
     extras_require={
-        'tflite': [ "tflite-runtime" ],
-        'full': [ "tensorflow" ]
+        'tflite': ["tflite-runtime"],
+        'full': ["tensorflow"]
     },
     author='jarbas',
     author_email='jarbasai@mailfence.com',

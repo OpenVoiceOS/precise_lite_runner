@@ -3,8 +3,11 @@ import time
 from threading import Thread, Event
 
 import numpy as np
-import pyaudio
-from pyaudio import PyAudio, paInt16
+try:
+    import pyaudio
+    from pyaudio import PyAudio, paInt16
+except ImportError:
+    pyaudio = None
 
 try:
     import tensorflow.lite as tflite
@@ -206,17 +209,20 @@ class PreciseRunner:
         pyaudio.Stream.read takes samples as n, not bytes
         so read(n) should be read(n // sample_depth)
         """
-
-        if getattr(stream.read, '__func__', None) is pyaudio.Stream.read:
-            stream.read = lambda x: pyaudio.Stream.read(stream, x // 2, False)
+        if pyaudio is not None:
+            if getattr(stream.read, '__func__', None) is pyaudio.Stream.read:
+                stream.read = lambda x: pyaudio.Stream.read(stream, x // 2, False)
 
     def start(self):
         """Start listening from stream"""
         if self.stream is None:
-            self.pa = PyAudio()
-            self.stream = self.pa.open(
-                16000, 1, paInt16, True, frames_per_buffer=self.chunk_size
-            )
+            if pyaudio is not None:
+                self.pa = PyAudio()
+                self.stream = self.pa.open(
+                    16000, 1, paInt16, True, frames_per_buffer=self.chunk_size
+                )
+            else:
+                raise ValueError("self.stream is None, pass a stream or install pyaudio to use mic")
 
         self._wrap_stream_read(self.stream)
 
