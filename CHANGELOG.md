@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/OpenVoiceOS/precise_lite_runner/tree/HEAD)
 
-[Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/V0.4.1...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/V0.4.2a1...HEAD)
+
+**Implemented enhancements:**
+
+- feat/vectorize\_utils [\#3](https://github.com/OpenVoiceOS/precise_lite_runner/pull/3) ([JarbasAl](https://github.com/JarbasAl))
+
+## [V0.4.2a1](https://github.com/OpenVoiceOS/precise_lite_runner/tree/V0.4.2a1) (2023-04-12)
+
+[Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/V0.4.1...V0.4.2a1)
 
 **Merged pull requests:**
 
