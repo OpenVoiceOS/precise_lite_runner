@@ -1,3 +1,5 @@
+import hashlib
+
 import numpy as np
 from sonopy import mfcc_spec, mel_spec
 
@@ -38,3 +40,39 @@ def add_deltas(features: np.ndarray) -> np.ndarray:
 
     return np.concatenate([features, deltas], -1)
 
+
+def vectorize(audio: np.ndarray) -> np.ndarray:
+    """
+    Args:
+        audio: Audio verified to be of `sample_rate`
+
+    Returns:
+        array<float>: Vector representation of audio
+    """
+    if len(audio) > params.max_samples:
+        audio = audio[-params.max_samples:]
+    features = vectorize_raw(audio)
+    if len(features) < params.n_features:
+        features = np.concatenate([
+            np.zeros((params.n_features - len(features), features.shape[1])),
+            features
+        ])
+    if len(features) > params.n_features:
+        features = features[-params.n_features:]
+
+    return features
+
+
+def vectorize_delta(audio: np.ndarray) -> np.ndarray:
+    return add_deltas(vectorize(audio))
+
+
+def vectorization_md5_hash(pr):
+    """Hash all the fields related to audio vectorization"""
+    keys = sorted(pr.__dict__)
+    print(keys)
+    keys.remove('threshold_config')
+    keys.remove('threshold_center')
+    return hashlib.md5(
+        str([pr.__dict__[i] for i in keys]).encode()
+    ).hexdigest()

@@ -1,4 +1,5 @@
 from math import floor
+from dataclasses import dataclass
 
 
 class Vectorizer:
@@ -7,19 +8,21 @@ class Vectorizer:
     speechpy_mfccs = 3
 
 
+@dataclass
 class ListenerParams:
-    window_t = 0.1
-    hop_t = 0.05
-    buffer_t = 1.5
-    sample_rate = 16000
-    sample_depth = 2
-    n_mfcc = 13
-    n_filt = 20
-    n_fft = 512
-    use_delta = False
-    vectorizer = Vectorizer.mfccs
-    threshold_config = ((6, 4),)
-    threshold_center = 0.2
+    window_t: float = 0.1
+    hop_t: float = 0.05
+    buffer_t: float = 1.5
+    sample_rate: int = 16000
+    sample_depth: int = 2
+    n_mfcc: int = 13
+    n_filt: int = 20
+    n_fft: int = 512
+    use_delta: bool = False
+    vectorizer: int = Vectorizer.mfccs
+    threshold_config: tuple = ((6, 4),)
+    threshold_center: float = 0.2
+
 
     @property
     def buffer_samples(self):
