@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased](https://github.com/OpenVoiceOS/precise_lite_runner/tree/HEAD)
+
+[Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/V0.4.1...HEAD)
+
+**Merged pull requests:**
+
+- refactor/optional\_pyaudio [\#2](https://github.com/OpenVoiceOS/precise_lite_runner/pull/2) ([JarbasAl](https://github.com/JarbasAl))
+
+## [V0.4.1](https://github.com/OpenVoiceOS/precise_lite_runner/tree/V0.4.1) (2023-04-06)
+
+[Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/V0.4.1a2...V0.4.1)
+
 ## [V0.4.1a2](https://github.com/OpenVoiceOS/precise_lite_runner/tree/V0.4.1a2) (2023-04-06)
 
 [Full Changelog](https://github.com/OpenVoiceOS/precise_lite_runner/compare/0.4.0...V0.4.1a2)
