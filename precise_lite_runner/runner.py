@@ -9,11 +9,8 @@ try:
 except ImportError:
     pyaudio = None
 
-try:
-    import tensorflow.lite as tflite
-except:
-    import tflite_runtime.interpreter as tflite
 
+from ai_edge_litert.interpreter import Interpreter
 from precise_lite_runner.params import params
 from precise_lite_runner.util import buffer_to_audio, ThresholdDecoder
 from precise_lite_runner.vectorization import vectorize_raw, add_deltas
@@ -22,7 +19,7 @@ from precise_lite_runner.vectorization import vectorize_raw, add_deltas
 class TFLiteRunner:
     def __init__(self, model_name: str):
         #  Setup tflite environment
-        self.interpreter = tflite.Interpreter(model_path=model_name)
+        self.interpreter = Interpreter(model_path=model_name)
         self.interpreter.allocate_tensors()
 
         self.input_details = self.interpreter.get_input_details()
