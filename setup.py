@@ -30,6 +30,17 @@ def get_version():
     return version
 
 
+def required(requirements_file):
+    """ Read requirements file and remove comments and empty lines. """
+    with open(os.path.join(BASEDIR, requirements_file), 'r') as f:
+        requirements = f.read().splitlines()
+        if 'MYCROFT_LOOSE_REQUIREMENTS' in os.environ:
+            print('USING LOOSE REQUIREMENTS!')
+            requirements = [r.replace('==', '>=').replace('~=', '>=') for r in requirements]
+        return [pkg for pkg in requirements
+                if pkg.strip() and not pkg.startswith("#")]
+
+
 setup(
     name='precise_lite_runner',
     version=get_version(),
@@ -37,12 +48,8 @@ setup(
     url='https://github.com/OpenVoiceOS/precise_lite_runner',
     license='Apache-2.0',
     include_package_data=True,
-    install_requires=["sonopy==0.1.2"],
-    extras_require={
-        'tflite': ["tflite-runtime"],
-        'full': ["tensorflow"]
-    },
-    author='jarbas',
+    install_requires=required("requirements.txt"),
+    author='JarbasAi',
     author_email='jarbasai@mailfence.com',
     description=''
 )
