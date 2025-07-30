@@ -1,3 +1,2 @@
 ai-edge-litert
-sonopy==0.1.2
-pyaudio
+sonopy>=0.1.2,<1.0.0
