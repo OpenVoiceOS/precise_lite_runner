@@ -74,5 +74,5 @@ def pdf(x, mu, std):
 
 def buffer_to_audio(buffer: bytes) -> np.ndarray:
     """Convert a raw mono audio byte string to numpy array of floats"""
-    return np.fromstring(buffer, dtype='<i2').astype(np.float32,
+    return np.frombuffer(buffer, dtype='<i2').astype(np.float32,
                                                      order='C') / 32768.0
